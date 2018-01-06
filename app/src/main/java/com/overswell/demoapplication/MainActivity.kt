@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val sensor: Sensor? by lazy {
-        sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR)
+        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,12 +44,12 @@ class MainActivity : AppCompatActivity() {
 
     private val sensorEventListener = object : SensorEventListener {
 
-        override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-            viewModel.accuracyChange(p1)
+        override fun onAccuracyChanged(sensor1: Sensor?, newAccuracy: Int) {
+            viewModel.accuracyChange(newAccuracy)
         }
 
-        override fun onSensorChanged(p0: SensorEvent?) {
-            viewModel.sensorChange(p0?.values)
+        override fun onSensorChanged(sensorEvent: SensorEvent?) {
+            viewModel.sensorChange(sensorEvent?.values)
         }
     }
 

@@ -33,6 +33,10 @@ class MainActivityFragment : Fragment() {
             view.textView_y.text = "${it?.y}"
             view.textView_z.text = "${it?.z}"
 
+            view.imageView.translationX = 100f * (it?.y ?: 0f)
+            view.imageView.translationY = 100f * (it?.x ?: 0f)
+            view.imageView.rotation = 10f* (it?.z ?: 0f)
+
         })
 
         return view
