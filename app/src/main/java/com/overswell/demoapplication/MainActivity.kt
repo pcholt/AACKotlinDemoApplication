@@ -1,0 +1,84 @@
+package com.overswell.demoapplication
+
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity() {
+
+    private val viewModel by lazy {
+        ViewModelProviders.of(this).get(SensorViewModel::class.java)
+    }
+
+    private val sensorManager by lazy {
+        application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    private val sensor: Sensor? by lazy {
+        sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_GAME)
+    }
+
+    override fun onPause() {
+        sensorManager.unregisterListener(sensorEventListener)
+        super.onPause()
+    }
+
+    private val sensorEventListener = object : SensorEventListener {
+
+        override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+            viewModel.accuracyChange(p1)
+        }
+
+        override fun onSensorChanged(p0: SensorEvent?) {
+            viewModel.sensorChange(p0?.values)
+        }
+    }
+
+}
+
+class SensorViewModel : ViewModel() {
+
+    val data: MutableLiveData<SensorData> = MutableLiveData()
+    val accuracy: MutableLiveData<Int> = MutableLiveData()
+    val sensorCache = SensorData()
+
+    fun sensorChange(values: FloatArray?) {
+        sensorCache.fromSensor(values)
+        data.value = sensorCache
+    }
+
+    fun accuracyChange(accuracy: Int) {
+        this.accuracy.value = accuracy
+    }
+
+}
+
+data class SensorData(var x:Float=0f, var y:Float=0f, var z:Float=0f) {
+    fun fromSensor(data:FloatArray?) {
+        if (data?.size?:0 > 0)
+            x = data?.get(0) ?: 0f
+        if (data?.size?:0 > 1)
+            y = data?.get(1) ?: 0f
+        if (data?.size?:0 > 2)
+            z = data?.get(2) ?: 0f
+    }
+}
