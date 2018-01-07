@@ -26,6 +26,19 @@ class MainActivity : AppCompatActivity() {
         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
+    private val sensorEventListener by lazy {
+        object : SensorEventListener {
+
+            override fun onAccuracyChanged(sensor1: Sensor?, newAccuracy: Int) {
+                viewModel.accuracyChange(newAccuracy)
+            }
+
+            override fun onSensorChanged(sensorEvent: SensorEvent?) {
+                viewModel.sensorChange(sensorEvent?.values)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,23 +47,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_GAME)
+        sensorManager.registerListener(sensorEventListener,
+                sensor, SensorManager.SENSOR_DELAY_GAME)
     }
 
     override fun onPause() {
         sensorManager.unregisterListener(sensorEventListener)
         super.onPause()
-    }
-
-    private val sensorEventListener = object : SensorEventListener {
-
-        override fun onAccuracyChanged(sensor1: Sensor?, newAccuracy: Int) {
-            viewModel.accuracyChange(newAccuracy)
-        }
-
-        override fun onSensorChanged(sensorEvent: SensorEvent?) {
-            viewModel.sensorChange(sensorEvent?.values)
-        }
     }
 
 }
@@ -74,11 +77,8 @@ class SensorViewModel : ViewModel() {
 
 data class SensorData(var x:Float=0f, var y:Float=0f, var z:Float=0f) {
     fun fromSensor(data:FloatArray?) {
-        if (data?.size?:0 > 0)
-            x = data?.get(0) ?: 0f
-        if (data?.size?:0 > 1)
-            y = data?.get(1) ?: 0f
-        if (data?.size?:0 > 2)
-            z = data?.get(2) ?: 0f
+        if (data?.size?:0 > 0) x = data?.get(0) ?: 0f
+        if (data?.size?:0 > 1) y = data?.get(1) ?: 0f
+        if (data?.size?:0 > 2) z = data?.get(2) ?: 0f
     }
 }
