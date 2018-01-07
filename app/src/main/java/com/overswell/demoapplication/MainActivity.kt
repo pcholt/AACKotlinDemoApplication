@@ -64,6 +64,10 @@ class SensorViewModel : ViewModel() {
     val accuracy: MutableLiveData<Int> = MutableLiveData()
     val sensorCache = SensorData()
 
+    val x get() = data.value?.x ?: 0f
+    val y get() = data.value?.y ?: 0f
+    val z get() = data.value?.z ?: 0f
+
     fun sensorChange(values: FloatArray?) {
         sensorCache.fromSensor(values)
         data.value = sensorCache
