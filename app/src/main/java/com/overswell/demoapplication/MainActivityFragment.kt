@@ -11,7 +11,7 @@ import android.view.ViewGroup
  */
 class MainActivityFragment : Fragment() {
 
-//    Create a SensorViewModel
+    // Get the SensorViewModel from the activity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
