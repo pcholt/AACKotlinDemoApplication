@@ -1,5 +1,7 @@
 package com.overswell.demoapplication
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
@@ -56,6 +58,14 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
+}
+
+class AccountViewModel : ViewModel() {
+    val account = MutableLiveData<Account>()
+
+    val database by lazy {
+        MyApp.database?.accountDao()
+    }
 }
 
 class SensorViewModel : ViewModel() {
